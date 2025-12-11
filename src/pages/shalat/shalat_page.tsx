@@ -252,8 +252,8 @@ export default function AdhanPage() {
               </Group>
               <DatePicker
                 locale="id"
-                value={date}
-                date={date || undefined}
+                // value={date}
+                // date={date || undefined}
                 renderDay={(d) => (
                   <Text
                     c={
@@ -267,8 +267,13 @@ export default function AdhanPage() {
                     {dayjs(d).format("DD")}
                   </Text>
                 )}
+                minDate={date || undefined}
+                maxDate={dayjs().add(40, "year").toDate()}
                 defaultDate={date || undefined}
                 onChange={setDate as any}
+                onYearSelect={setDate as any}
+                onMonthSelect={setDate as any}
+                
               />
             </Stack>
           </Card>
