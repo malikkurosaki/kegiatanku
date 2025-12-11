@@ -1,0 +1,24 @@
+services:
+  search:
+    image: searxng/searxng:latest
+    container_name: search
+    restart: unless-stopped
+    environment:
+      - BASE_URL=https://cld-dkr-makuro-search.wibudev.com
+      - INSTANCE_NAME=WibuSearch
+      - AUTOCOMPLETE=google
+    volumes:
+      - ./data/searxng:/etc/searxng
+    networks:
+      - search-network
+  seafile-frpc:
+    image: snowdreamtech/frpc:latest
+    container_name: seafile-frpc
+    restart: always
+    volumes:
+      - ./data/frpc/frpc.toml:/etc/frp/frpc.toml:ro
+    networks:
+      - search-network
+networks: 
+  search-network:
+    driver: bridge
