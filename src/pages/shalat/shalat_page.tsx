@@ -235,7 +235,10 @@ export default function AdhanPage() {
 
         {JadwalHariIni(prayerList, formatCountdown)}
 
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={{
+          base: 1,
+          md: 2
+        }}>
           {JadwalImamHariIni(date, daily, adhan)}
           <Card
             padding="lg"
@@ -457,8 +460,8 @@ function CalendarTable(
                       <div style={{ fontSize: 11, color: "#6b7280" }}>
                         {holiday
                           ? holidays.find(
-                              (h) => dayjs(h.date).format("YYYY-MM-DD") === iso,
-                            )?.name
+                            (h) => dayjs(h.date).format("YYYY-MM-DD") === iso,
+                          )?.name
                           : ""}
                       </div>
                     </div>
