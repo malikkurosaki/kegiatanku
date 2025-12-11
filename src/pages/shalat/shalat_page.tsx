@@ -283,10 +283,8 @@ export default function AdhanPage() {
               </Stack>
             </Card>
           </SimpleGrid>
-
-          {CalendarTable(date, monthGrid, isHoliday, monthly, setDate, holidays)}
-
           {RingkasanBulalan(monthly, year, month, isHoliday)}
+          {CalendarTable(date, monthGrid, isHoliday, monthly, setDate, holidays)}
           {FullYearHoliday(year, holidays)}
         </Stack>
       </Container>
