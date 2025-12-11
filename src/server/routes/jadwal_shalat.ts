@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import tz from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
+import type { User } from "generated/prisma";
 
 dayjs.extend(utc);
 dayjs.extend(tz);
@@ -29,7 +30,7 @@ function normalize(dateStr: string) {
 /* ------------------------------------------------------------------
    MAIN ROUTER
 ------------------------------------------------------------------- */
-const JadwalSholat = new Elysia({
+const JadwalShalat = new Elysia({
     prefix: "/jadwal-sholat",
     tags: ["jadwal_sholat"],
 })
@@ -137,10 +138,12 @@ const JadwalSholat = new Elysia({
             },
         }
     )
-    .get("/user-list", async () => {
-        const user = await prisma.user.findMany();
+    .get("/user-list", async (ctx) => {
+        const { user }: { user: User } = ctx as any;
+
+        const getUsers = await prisma.user.findMany();
         return {
-            data: user,
+            data: getUsers,
         };
     }, {
         detail: {
@@ -148,32 +151,12 @@ const JadwalSholat = new Elysia({
             description: "mendapatkan list user",
         },
     })
-    .put("/user-active", async ({ body }) => {
-        const { id } = body;
-        const user = await prisma.user.update({
-            where: { id },
-            data: { active: body.active },
-        });
-        return {
-            success: true,
-            data: user,
-        };
-    }, {
-        body: t.Object({
-            id: t.String(),
-            active: t.Boolean(),
-        }),
-        detail: {
-            summary: "Active user",
-            description: "mengaktifkan user",
-        },
-    })
     .get("/config", async () => {
         const config = await prisma.configs.findUnique({
             where: { id: "1" },
         });
         console.log(config);
-        
+
         return {
             data: config,
         };
@@ -182,34 +165,9 @@ const JadwalSholat = new Elysia({
             summary: "Get config",
             description: "mendapatkan config",
         },
-    })
-    .put("/config", async ({ body }) => {
-        const { imamKey, ikomahKey } = body;
-        const config = await prisma.configs.update({
-            where: { id: "1" },
-            data: { imamKey, ikomahKey },
-        });
-        console.log({
-            success: true,
-            config,
-        });
-        return {
-            success: true,
-            data: config,
-        };
-    }, {
-        body: t.Object({
-            id: t.String(),
-            imamKey: t.String(),
-            ikomahKey: t.String(),
-        }),
-        detail: {
-            summary: "Update config",
-            description: "mengupdate config",
-        },
     });
 
-export default JadwalSholat;
+export default JadwalShalat;
 
 /* ------------------------------------------------------------------
    FUNCTIONS

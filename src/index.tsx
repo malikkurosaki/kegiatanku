@@ -11,7 +11,8 @@ import { cors } from "@elysiajs/cors";
 import packageJson from "./../package.json";
 import Configs from "./server/routes/configs_route";
 import { prisma } from "./server/lib/prisma";
-import JadwalSholat from "./server/routes/jadwal_sholat";
+import JadwalShalat from "./server/routes/jadwal_shalat";
+import { JadwalShalatAdmin } from "./server/routes/jadwal_shalat_admin";
 const PORT = process.env.PORT || 3000;
 
 const Docs = new Elysia().use(
@@ -71,11 +72,12 @@ const ApiUser = new Elysia({
 const Api = new Elysia({
   prefix: "/api",
 })
+  .use(JadwalShalat)
   .use(Configs)
   .use(apiAuth)
   .use(ApiKeyRoute)
   .use(ApiUser)
-  .use(JadwalSholat);
+  .use(JadwalShalatAdmin);
 
 const app = new Elysia()
   .use(cors())
@@ -129,7 +131,7 @@ const app = new Elysia()
       },
     },
   )
-  .get("/*", html)
+  .get("*", html)
   .listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });

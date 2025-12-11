@@ -1,12 +1,13 @@
+import clientRoutes from "@/clientRoutes";
 import apiFetch from "@/lib/apiFetch";
 import {
+  ActionIcon,
   Button,
   Card,
   Container,
   Flex,
   Group,
   Loader,
-  Radio,
   Stack,
   Switch,
   Text,
@@ -15,8 +16,10 @@ import {
 } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { IconEye } from "@tabler/icons-react";
 import type { Configs, User } from "generated/prisma";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import useSwr from "swr";
 
 export default function JadwalShalat() {
@@ -37,6 +40,7 @@ function ListUser() {
     apiFetch.api["jadwal-sholat"]["user-list"].get,
   );
   const [listUser, setListUser] = useState<User[]>([]);
+  const navigate = useNavigate();
   useShallowEffect(() => {
     setListUser(data?.data?.data ?? []);
   }, [data]);
@@ -44,27 +48,38 @@ function ListUser() {
   if (error) return <Text>{error.message}</Text>;
 
   return (
-    <Card>
-      <Stack>
-        <Title order={4}>List User</Title>
-        {listUser.map((user) => (
-          <Stack key={user.id}>
-            <Flex>
-              <Text w={200}>{user.name}</Text>
-              <Switch
-                defaultChecked={user.active}
-                onChange={async (e) => {
-                  const { data } = await apiFetch.api["jadwal-sholat"][
-                    "user-active"
-                  ].put({ id: user.id, active: e.target.checked });
-                  mutate();
-                }}
-              />
-            </Flex>
-          </Stack>
-        ))}
-      </Stack>
-    </Card>
+    <Stack>
+      <Group justify="end">
+        <ActionIcon
+          variant="subtle"
+          color="blue"
+          onClick={() => navigate(clientRoutes["/shalat/shalat"])}
+        >
+          <IconEye />
+        </ActionIcon>
+      </Group>
+      <Card>
+        <Stack>
+          <Title order={4}>List User</Title>
+          {listUser.map((user) => (
+            <Stack key={user.id}>
+              <Flex>
+                <Text w={200}>{user.name}</Text>
+                <Switch
+                  defaultChecked={user.active}
+                  onChange={async (e) => {
+                    const { data } = await apiFetch.api["jadwal-sholat-admin"][
+                      "user-active"
+                    ].put({ id: user.id, active: e.target.checked });
+                    mutate();
+                  }}
+                />
+              </Flex>
+            </Stack>
+          ))}
+        </Stack>
+      </Card>
+    </Stack>
   );
 }
 
@@ -110,31 +125,33 @@ function ConfigUpdate() {
   }, [data]);
 
   async function handleUpdate() {
-    if (!config?.ikomahKey || !config?.imamKey) return notifications.show({
-      title: "Error",
-      message: "Config updated failed",
-      color: "red",
-    });
-    const { data , status} = await apiFetch.api["jadwal-sholat"]["config"].put({
+    if (!config?.ikomahKey || !config?.imamKey)
+      return notifications.show({
+        title: "Error",
+        message: "Config updated failed",
+        color: "red",
+      });
+    const { data, status } = await apiFetch.api["jadwal-sholat-admin"][
+      "config"
+    ].put({
       id: "1",
       ikomahKey: config.ikomahKey,
       imamKey: config.imamKey,
     });
-    
-    if(status === 200 ) {
+
+    if (status === 200) {
       notifications.show({
         title: "Success",
         message: "Config updated successfully",
         color: "green",
       });
-    }else{
+    } else {
       notifications.show({
         title: "Error",
         message: "Config updated failed",
         color: "red",
       });
     }
-    
   }
 
   if (isLoading) return <Loader />;
@@ -146,11 +163,19 @@ function ConfigUpdate() {
         <Title order={4}>Config</Title>
         <Flex>
           <Text w={200}>Imam Key</Text>
-          <TextInput defaultValue={config?.imamKey} onChange={(e) => setConfig({ ...config, imamKey: e.target.value })} />
+          <TextInput
+            defaultValue={config?.imamKey}
+            onChange={(e) => setConfig({ ...config, imamKey: e.target.value })}
+          />
         </Flex>
         <Flex>
           <Text w={200}>Ikomah Key</Text>
-          <TextInput defaultValue={config?.ikomahKey} onChange={(e) => setConfig({ ...config, ikomahKey: e.target.value })} />
+          <TextInput
+            defaultValue={config?.ikomahKey}
+            onChange={(e) =>
+              setConfig({ ...config, ikomahKey: e.target.value })
+            }
+          />
         </Flex>
         <Group justify="end">
           <Button onClick={handleUpdate}>Update</Button>

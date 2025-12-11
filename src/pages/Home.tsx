@@ -1,7 +1,13 @@
 import clientRoutes from "@/clientRoutes";
 import { Button, Card, Container, Group, Stack, Title } from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+
+  useShallowEffect(() => {
+    window.location.reload()
+  },[])
   return (
     <Container size={420} py={80}>
       <Card shadow="sm" padding="xl" radius="md">

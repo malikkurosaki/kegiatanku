@@ -13,14 +13,13 @@ import {
   Stack,
   Text,
   Title,
-  UnstyledButton
+  UnstyledButton,
 } from "@mantine/core";
-import { DatePicker, DatePickerInput } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import duration from "dayjs/plugin/duration";
 import { useEffect, useMemo, useState } from "react";
-import { DateScrollPicker } from 'react-date-wheel-picker'
 
 import {
   IconCalendar,
@@ -39,7 +38,8 @@ import {
 
 import DateHolidays, { type HolidaysTypes } from "date-holidays";
 import useSwr from "swr";
-
+import { useNavigate } from "react-router";
+import clientRoutes from "@/clientRoutes";
 dayjs.locale("id");
 dayjs.extend(duration);
 
@@ -62,6 +62,7 @@ export default function AdhanPage() {
   const [daily, setDaily] = useState<any>(null);
   const [adhan, setAdhan] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // tahun & bulan yang dipakai
   const year = dayjs(date).year();
@@ -217,7 +218,12 @@ export default function AdhanPage() {
       <Stack gap="xl" py="md">
         <Stack justify="apart" align="center">
           <Stack justify="center" align="center">
-            <IconCalendar color="cyan" size={"6rem"} stroke={1.3} />
+            <IconCalendar
+              color="cyan"
+              size={"6rem"}
+              stroke={1.3}
+              onClick={() => navigate("/")}
+            />
             <Title order={2} fw={700}>
               Jadwal Sholat & Imam
             </Title>
@@ -245,17 +251,22 @@ export default function AdhanPage() {
                 locale="id"
                 value={date}
                 date={date || undefined}
-                renderDay={(d) => <Text c={ dayjs(d).date() === dayjs(date).date() ? "green" : isHoliday(dayjs(d).format("YYYY-MM-DD")) ? "red" : ""}>{dayjs(d).format("DD")}</Text>}
+                renderDay={(d) => (
+                  <Text
+                    c={
+                      dayjs(d).date() === dayjs(date).date()
+                        ? "green"
+                        : isHoliday(dayjs(d).format("YYYY-MM-DD"))
+                          ? "red"
+                          : ""
+                    }
+                  >
+                    {dayjs(d).format("DD")}
+                  </Text>
+                )}
                 defaultDate={date || undefined}
                 onChange={setDate as any}
               />
-              {/* <DatePickerInput
-                locale="id"
-                value={date}
-                onChange={setDate as any}
-                placeholder="Pilih tanggal"
-                radius="md"
-              /> */}
             </Stack>
           </Card>
         </SimpleGrid>
@@ -531,65 +542,6 @@ function RingkasanBulalan(
             );
           })}
         </SimpleGrid>
-        {/* <Paper radius="sm" >
-          <Table verticalSpacing="sm" >
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th style={{ width: 120 }}>Tanggal</Table.Th>
-                <Table.Th>Imam</Table.Th>
-                <Table.Th>Ikomah</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {Object.keys(monthly.data.imam).map((d) => {
-                const tglNum = Number(d);
-                const iso = dayjs(
-                  `${year}-${String(month).padStart(2, "0")}-${String(tglNum).padStart(2, "0")}`,
-                ).format("YYYY-MM-DD");
-                const holiday = isHoliday(iso);
-                const isToday = dayjs(iso).isSame(dayjs(), "day");
-                return (
-                  <Table.Tr
-                    key={d}
-                    c={holiday ? "red.9" : isToday ? "green.9" : ""}
-                  >
-                    <Table.Td>
-                      <Text fw={isToday ? 700 : 500}>
-                        {dayjs(iso).format("ddd, DD MMM")}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      {monthly.data.imam[d] ? (
-                        <Badge
-                          leftSection={<IconUser size={12} />}
-                          variant="light"
-                          color="blue"
-                        >
-                          {monthly.data.imam[d]}
-                        </Badge>
-                      ) : (
-                        <Text c="dimmed">-</Text>
-                      )}
-                    </Table.Td>
-                    <Table.Td>
-                      {monthly.data.ikomah[d] ? (
-                        <Badge
-                          leftSection={<IconClock size={12} />}
-                          variant="light"
-                          color="grape"
-                        >
-                          {monthly.data.ikomah[d]}
-                        </Badge>
-                      ) : (
-                        <Text c="dimmed">-</Text>
-                      )}
-                    </Table.Td>
-                  </Table.Tr>
-                );
-              })}
-            </Table.Tbody>
-          </Table>
-        </Paper> */}
       </Stack>
     </Card>
   );
@@ -625,47 +577,6 @@ function FullYearHoliday(year: number, holidays: HolidaysTypes.Holiday[]) {
             </SimpleGrid>
           </Stack>
         )}
-        {/* <Paper radius="lg" >
-          <Table
-            stickyHeader
-            verticalSpacing="md"
-            highlightOnHover
-            w="100%"
-          >
-            <Table.Thead
-              style={{
-                position: "sticky",
-                top: 0,
-                background: "white",
-                zIndex: 2,
-              }}
-            >
-              <Table.Tr>
-                <Table.Th style={{ width: 240 }}>Tanggal</Table.Th>
-                <Table.Th>Nama Libur</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-
-            <Table.Tbody>
-              {holidays.map((h, idx) => {
-                const tgl = dayjs(h.date).format("dddd, DD MMMM YYYY");
-                return (
-                  <Table.Tr key={idx}>
-                    <Table.Td>
-                      <Group>
-                        <IconCalendarStar size={16} />
-                        <Text>{tgl}</Text>
-                      </Group>
-                    </Table.Td>
-
-                    <Table.Td style={{ fontWeight: 700 }}>{h.name}</Table.Td>
-
-                  </Table.Tr>
-                );
-              })}
-            </Table.Tbody>
-          </Table>
-        </Paper> */}
       </Stack>
     </Card>
   );
@@ -708,9 +619,6 @@ function JadwalHariIni(
                       {p.name}
                     </Text>
                   </Group>
-                  {/* <Text size="sm" c={p.isPast ? "dimmed" : undefined}>
-                                    {p.isPast ? "Sudah lewat" : (formatCountdown(p.dt) ?? "-")}
-                                </Text> */}
                 </Group>
 
                 <Group justify="apart" align="center">
