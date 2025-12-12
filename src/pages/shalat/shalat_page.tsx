@@ -678,7 +678,7 @@ function UserList() {
     <SimpleGrid
       spacing={"sm"}
       cols={{
-        base: 4,
+        base: 3,
         sm: 6,
       }}
     >
@@ -687,7 +687,6 @@ function UserList() {
         return (
           <Card key={u.id} radius={"40"} withBorder bg={"dark.9"}>
             <Flex align="center" gap={"md"}>
-              <IconUser size={"2rem"} color="green" />
               <Text size="1rem">{u.name}</Text>
             </Flex>
           </Card>

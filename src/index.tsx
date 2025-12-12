@@ -13,8 +13,8 @@ import Configs from "./server/routes/configs_route";
 import { prisma } from "./server/lib/prisma";
 import JadwalShalat from "./server/routes/jadwal_shalat";
 import { JadwalShalatAdmin } from "./server/routes/jadwal_shalat_admin";
+import staticPlugin from "@elysiajs/static";
 const PORT = process.env.PORT || 3000;
-
 const Docs = new Elysia().use(
   Swagger({
     path: "/docs",
@@ -81,6 +81,12 @@ const Api = new Elysia({
 
 const app = new Elysia()
   .use(cors())
+  // .use(
+  //   staticPlugin({
+  //     assets: "dist",
+  //     prefix: "/",
+  //   })
+  // )
   .use(Api)
   .use(Docs)
   .use(Auth)
@@ -115,22 +121,22 @@ const app = new Elysia()
       },
     },
   )
-  .get(
-    "/",
-    async () => {
-      const stream = await renderToReadableStream(<LandingPage />);
-      return new Response(stream, {
-        headers: { "Content-Type": "text/html" },
-      });
-    },
-    {
-      detail: {
-        description: "Landing page for " + packageJson.name,
-        summary: "Get the main landing page",
-        tags: ["General"],
-      },
-    },
-  )
+  // .get(
+  //   "/",
+  //   async () => {
+  //     const stream = await renderToReadableStream(<LandingPage />);
+  //     return new Response(stream, {
+  //       headers: { "Content-Type": "text/html" },
+  //     });
+  //   },
+  //   {
+  //     detail: {
+  //       description: "Landing page for " + packageJson.name,
+  //       summary: "Get the main landing page",
+  //       tags: ["General"],
+  //     },
+  //   },
+  // )
   .get("*", html)
   .listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
