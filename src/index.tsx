@@ -81,12 +81,7 @@ const Api = new Elysia({
 
 const app = new Elysia()
   .use(cors())
-  // .use(
-  //   staticPlugin({
-  //     assets: "dist",
-  //     prefix: "/",
-  //   })
-  // )
+  .use(staticPlugin())
   .use(Api)
   .use(Docs)
   .use(Auth)

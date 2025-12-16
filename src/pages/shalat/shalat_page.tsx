@@ -257,29 +257,39 @@ export default function AdhanPage() {
                 </Group>
                 <DatePicker
                   locale="id"
-                  value={date}
-                  // date={date || undefined}
                   renderDay={(d) => (
                     <Text
                       c={
-                        dayjs(d).date() === dayjs(date).date()
+                        dayjs(d).isSame(dayjs(date), "day")
                           ? "green"
                           : isHoliday(dayjs(d).format("YYYY-MM-DD"))
                             ? "red"
-                            : ""
+                            : undefined
                       }
                     >
-                      {dayjs(d).format("DD")}
+                      {dayjs(d).date()}
                     </Text>
                   )}
-                  minDate={dayjs("2025-01-01").toDate()}
+                  defaultDate={dayjs(date).toDate()}
+                  minDate={dayjs("2024-01-01").toDate()}
                   maxDate={dayjs().add(40, "year").toDate()}
-                  // defaultDate={date || undefined}
-                  onChange={(date) => setDate(dayjs(date).toDate())}
-                  onYearSelect={(year) => setDate(dayjs(year).toDate())}
-                  onMonthSelect={(month) => setDate(dayjs(month).toDate())}
-
+                  onChange={(d) => setDate(dayjs(d).toDate())}
+                  onYearSelect={(d) =>
+                    setDate(
+                      dayjs(date)
+                        .year(dayjs(d).year())
+                        .toDate()
+                    )
+                  }
+                  onMonthSelect={(d) =>
+                    setDate(
+                      dayjs(date)
+                        .month(dayjs(d).month())
+                        .toDate()
+                    )
+                  }
                 />
+
               </Stack>
             </Card>
           </SimpleGrid>
